@@ -30,7 +30,7 @@
 </style>
 </head>
 <body>
-<div id="touchArea">Touch me and drag!</div>
+<div id="touchArea">Touch or drag!</div>
 <button onclick="toggleFullscreen();">Toggle Fullscreen</button>
 <script>
     function getRandomColor() {
@@ -43,25 +43,46 @@
     }
 
     const touchArea = document.getElementById('touchArea');
+    let isDragging = false;
 
+    // Handle touch events
     touchArea.addEventListener('touchstart', function(e) {
         e.preventDefault();
-        console.log('touchstart', e.touches[0].pageX, e.touches[0].pageY);
+        isDragging = true;
         createColorDot(e.touches[0]);
     });
-
     touchArea.addEventListener('touchmove', function(e) {
-        e.preventDefault();
-        console.log('touchmove', e.touches[0].pageX, e.touches[0].pageY);
-        createColorDot(e.touches[0]);
+        if (isDragging) {
+            e.preventDefault();
+            createColorDot(e.touches[0]);
+        }
+    });
+    touchArea.addEventListener('touchend', function() {
+        isDragging = false;
     });
 
-    function createColorDot(touch) {
+    // Handle mouse events
+    touchArea.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        isDragging = true;
+        createColorDot(e);
+    });
+    touchArea.addEventListener('mousemove', function(e) {
+        if (isDragging) {
+            e.preventDefault();
+            createColorDot(e);
+        }
+    });
+    window.addEventListener('mouseup', function() {
+        isDragging = false;
+    });
+
+    function createColorDot(event) {
         const dot = document.createElement('div');
         dot.className = 'color-dot';
         dot.style.backgroundColor = getRandomColor();
-        dot.style.left = touch.pageX + 'px';
-        dot.style.top = touch.pageY + 'px';
+        dot.style.left = event.pageX + 'px';
+        dot.style.top = event.pageY + 'px';
         touchArea.appendChild(dot);
         fadeOut(dot);
     }
