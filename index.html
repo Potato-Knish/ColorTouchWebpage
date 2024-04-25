@@ -21,6 +21,7 @@
 </head>
 <body>
 <div id="touchArea">Touch me!</div>
+<button onclick="toggleFullscreen();">Toggle Fullscreen</button>
 <script>
     function getRandomColor() {
         const letters = '0123456789ABCDEF';
@@ -34,6 +35,18 @@
     document.getElementById('touchArea').addEventListener('touchstart', function() {
         this.style.backgroundColor = getRandomColor();
     });
+
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                alert('Error attempting to enable full-screen mode: ' + err.message + ' (' + err.name + ')');
+            });
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    }
 </script>
 </body>
 </html>
