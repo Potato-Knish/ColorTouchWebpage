@@ -45,44 +45,40 @@
     const touchArea = document.getElementById('touchArea');
     let isDragging = false;
 
-    // Handle touch events
-    touchArea.addEventListener('touchstart', function(e) {
-        e.preventDefault();
-        isDragging = true;
-        createColorDot(e.touches[0]);
-    });
-    touchArea.addEventListener('touchmove', function(e) {
-        if (isDragging) {
-            e.preventDefault();
-            createColorDot(e.touches[0]);
-        }
-    });
-    touchArea.addEventListener('touchend', function() {
-        isDragging = false;
-    });
-
-    // Handle mouse events
-    touchArea.addEventListener('mousedown', function(e) {
+    function handleStart(e) {
         e.preventDefault();
         isDragging = true;
         createColorDot(e);
-    });
-    touchArea.addEventListener('mousemove', function(e) {
+    }
+
+    function handleMove(e) {
+        e.preventDefault();
         if (isDragging) {
-            e.preventDefault();
             createColorDot(e);
         }
-    });
-    window.addEventListener('mouseup', function() {
-        isDragging = false;
-    });
+    }
 
-    function createColorDot(event) {
+    function handleEnd() {
+        isDragging = false;
+    }
+
+    touchArea.addEventListener('touchstart', handleStart);
+    touchArea.addEventListener('touchmove', handleMove);
+    touchArea.addEventListener('touchend', handleEnd);
+
+    touchArea.addEventListener('mousedown', handleStart);
+    touchArea.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', handleEnd);
+
+    function createColorDot(e) {
+        var x = e.pageX || e.touches[0].pageX;
+        var y = e.pageY || e.touches[0].pageY;
+
         const dot = document.createElement('div');
         dot.className = 'color-dot';
         dot.style.backgroundColor = getRandomColor();
-        dot.style.left = event.pageX + 'px';
-        dot.style.top = event.pageY + 'px';
+        dot.style.left = x + 'px';
+        dot.style.top = y + 'px';
         touchArea.appendChild(dot);
         fadeOut(dot);
     }
