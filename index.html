@@ -45,12 +45,14 @@
     const touchArea = document.getElementById('touchArea');
 
     touchArea.addEventListener('touchstart', function(e) {
-        e.preventDefault(); // Prevent default touch behavior like scrolling
+        e.preventDefault();
+        console.log('touchstart', e.touches[0].pageX, e.touches[0].pageY);
         createColorDot(e.touches[0]);
     });
 
     touchArea.addEventListener('touchmove', function(e) {
         e.preventDefault();
+        console.log('touchmove', e.touches[0].pageX, e.touches[0].pageY);
         createColorDot(e.touches[0]);
     });
 
