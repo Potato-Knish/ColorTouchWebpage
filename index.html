@@ -1,125 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Color Touch</title>
-<style>
+  <meta charset="UTF-8">
+  <title>Color Touch</title>
+  <style>
     body, html {
-        height: 100%;
-        margin: 0;
-        overflow: hidden; /* Prevent scrolling */
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
     }
     #touchArea {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 24px;
-        color: white;
-        cursor: pointer; /* Encourage iOS to recognize touch interactions */
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      color: white;
+      cursor: pointer;
+      touch-action: none; /* Prevent default touch actions on iOS */
     }
     .color-dot {
-        position: absolute;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        pointer-events: none;
-        mix-blend-mode: lighten;
+      position: absolute;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      pointer-events: none;
+      mix-blend-mode: lighten;
     }
-</style>
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 </head>
 <body>
-<div id="touchArea">Hi Felix!</div>
-<button onclick="toggleFullscreen();">Toggle Fullscreen</button>
-<script>
-    function getRandomColor() {
-        const letters = '0123456789ABCDEF';
-        let color = '#';
-        for (let i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    }
-
-    const touchArea = document.getElementById('touchArea');
-    let isDragging = false;
-
-    // Separate handlers for touch and mouse to prevent confusion, with passive set to false
-    touchArea.addEventListener('touchstart', function(e) {
-        e.preventDefault(); // Prevents the default touch action (scroll/zoom)
-        isDragging = true;
-        createColorDot(e.touches[0]); // Using first touch point
-    }, { passive: false });
-
-    touchArea.addEventListener('touchmove', function(e) {
-        if (isDragging) {
-            e.preventDefault(); // Prevents the default touch action (scroll/zoom)
-            createColorDot(e.touches[0]); // Using first touch point
-        }
-    }, { passive: false });
-
-    touchArea.addEventListener('touchend', function() {
-        isDragging = false;
-    });
-
-    // Only add mouse listeners if it's not a touch device
-    if (!('ontouchstart' in window) || navigator.maxTouchPoints === 0) {
-        touchArea.addEventListener('mousedown', function(e) {
-            isDragging = true;
-            createColorDot(e); // Mouse events
-        });
-
-        touchArea.addEventListener('mousemove', function(e) {
-            if (isDragging) {
-                createColorDot(e); // Mouse events
-            }
-        });
-
-        window.addEventListener('mouseup', function() {
-            isDragging = false;
-        });
-    }
-
-    function createColorDot(e) {
-        var x = e.clientX; // For mouse, clientX is used
-        var y = e.clientY; // For mouse, clientY is used
-
-        // For touch, coordinates are adjusted
-        if (e.touches) {
-            x = e.touches[0].clientX;
-            y = e.touches[0].clientY;
-        }
-
-        const dot = document.createElement('div');
-        dot.className = 'color-dot';
-        dot.style.backgroundColor = getRandomColor();
-        dot.style.left = x + 'px';
-        dot.style.top = y + 'px';
-        touchArea.appendChild(dot);
-        fadeOut(dot);
-    }
-
-    function fadeOut(element) {
-        setTimeout(function() {
-            element.style.opacity = 0;
-            setTimeout(function() { touchArea.removeChild(element); }, 1500);
-        }, 500);
-    }
-
+  <div id="touchArea">Hi Felix!</div>
+  <button onclick="toggleFullscreen();">Toggle Fullscreen</button>
+  <script>
+    // ... (keep the existing JavaScript code)
+    
+    // Fallback for fullscreen mode
     function toggleFullscreen() {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(err => {
-                alert('Error attempting to enable full-screen mode: ' + err.message + ' (' + err.name + ')');
-            });
+      if (!document.fullscreenElement) {
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen().catch(err => {
+            console.log('Error attempting to enable full-screen mode: ' + err.message);
+          });
         } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
+          console.log('Fullscreen mode is not supported');
         }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
     }
-</script>
+  </script>
 </body>
 </html>
