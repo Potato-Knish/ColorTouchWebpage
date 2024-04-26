@@ -18,6 +18,7 @@
         align-items: center;
         font-size: 24px;
         color: white;
+        cursor: pointer; /* Encourage iOS to recognize touch interactions */
     }
     .color-dot {
         position: absolute;
@@ -28,6 +29,7 @@
         mix-blend-mode: lighten;
     }
 </style>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 </head>
 <body>
 <div id="touchArea">Hi Felix!</div>
@@ -45,34 +47,51 @@
     const touchArea = document.getElementById('touchArea');
     let isDragging = false;
 
-    function handleStart(e) {
-        e.preventDefault();
+    // Separate handlers for touch and mouse to prevent confusion, with passive set to false
+    touchArea.addEventListener('touchstart', function(e) {
+        e.preventDefault(); // Prevents the default touch action (scroll/zoom)
         isDragging = true;
-        createColorDot(e);
-    }
+        createColorDot(e.touches[0]); // Using first touch point
+    }, { passive: false });
 
-    function handleMove(e) {
-        e.preventDefault();
+    touchArea.addEventListener('touchmove', function(e) {
         if (isDragging) {
-            createColorDot(e);
+            e.preventDefault(); // Prevents the default touch action (scroll/zoom)
+            createColorDot(e.touches[0]); // Using first touch point
         }
-    }
+    }, { passive: false });
 
-    function handleEnd() {
+    touchArea.addEventListener('touchend', function() {
         isDragging = false;
+    });
+
+    // Only add mouse listeners if it's not a touch device
+    if (!('ontouchstart' in window) || navigator.maxTouchPoints === 0) {
+        touchArea.addEventListener('mousedown', function(e) {
+            isDragging = true;
+            createColorDot(e); // Mouse events
+        });
+
+        touchArea.addEventListener('mousemove', function(e) {
+            if (isDragging) {
+                createColorDot(e); // Mouse events
+            }
+        });
+
+        window.addEventListener('mouseup', function() {
+            isDragging = false;
+        });
     }
-
-    touchArea.addEventListener('touchstart', handleStart);
-    touchArea.addEventListener('touchmove', handleMove);
-    touchArea.addEventListener('touchend', handleEnd);
-
-    touchArea.addEventListener('mousedown', handleStart);
-    touchArea.addEventListener('mousemove', handleMove);
-    window.addEventListener('mouseup', handleEnd);
 
     function createColorDot(e) {
-        var x = e.pageX || e.touches[0].pageX;
-        var y = e.pageY || e.touches[0].pageY;
+        var x = e.clientX; // For mouse, clientX is used
+        var y = e.clientY; // For mouse, clientY is used
+
+        // For touch, coordinates are adjusted
+        if (e.touches) {
+            x = e.touches[0].clientX;
+            y = e.touches[0].clientY;
+        }
 
         const dot = document.createElement('div');
         dot.className = 'color-dot';
