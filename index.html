@@ -24,8 +24,8 @@
     .color-dot {
       position: absolute;
       border-radius: 50%;
-      width: 20px;
-      height: 20px;
+      width: 30px;
+      height: 30px;
       pointer-events: none;
       mix-blend-mode: lighten;
     }
@@ -36,9 +36,6 @@
   <div id="touchArea">Hi Felix!</div>
   <button onclick="toggleFullscreen();">Toggle Fullscreen</button>
   <script>
-    // ... (keep the existing JavaScript code)
-    
-    // Fallback for fullscreen mode
     function toggleFullscreen() {
       if (!document.fullscreenElement) {
         if (document.documentElement.requestFullscreen) {
